@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hyuim <hyuim@student.42seoul.kr>           +#+  +:+       +#+         #
+#    By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/05 15:14:10 by hyuim             #+#    #+#              #
-#    Updated: 2023/05/31 20:45:34 by hyuim            ###   ########.fr        #
+#    Updated: 2023/06/01 20:05:13 by hyuim            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,7 +54,12 @@ ft_lstadd_back_bonus.c \
 ft_lstdelone_bonus.c \
 ft_lstclear_bonus.c \
 ft_lstiter_bonus.c \
-ft_lstmap_bonus.c
+ft_lstmap_bonus.c \
+ft_printf.c \
+ft_read_format.c \
+ft_check_char.c \
+ft_print_conversions1.c \
+ft_print_conversions2.c
 LIBFT_SRCS = ${addprefix ${LIBFT_PRE}, ${LIBFT_C}}
 LIBFT_OBJS = $(LIBFT_C:.c=.o)
 SRCS = main.c
