@@ -6,7 +6,7 @@
 /*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:36:46 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/01 21:07:05 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/02 17:37:44 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,27 +27,88 @@ int main(int argc, char *argv[])
 		ft_error("Wrong fractal type.\nFractal list {mandelbrot, julia, ???}", 2);
 	if (!init_mlx(&mlx))
 		ft_error("MLX init error\n", 2);
-	draw_fractal(&fractal);
+	init_fractal(&fractal);
+	draw_fractal(&mlx, &fractal);
 	// TODO :: draw_fractal, draw_mandelbrot, draw_julia
+	mlx_put_image_to_window(mlx.mlx, mlx.win, mlx.img.img, 0, 0);
 	mlx_loop(mlx.mlx);
-
-// 		  MinilibX의 images를 사용하라는데 어디다 쓰라는건지?
-//		  pixel 다 색칠해서 화면을 덮으려면 엄청 많이 반복해야되는건지?
 
 
 	return 0;
 }
 
-void	draw_fractal(t_fractal *fractal)
+int	check_mandelbrot_set(double c_r, double c_i)
+{
+	int		n;
+	int		temp;
+	double	z_r;
+	double	z_i;
+
+	n = 0;
+	z_r = 0;
+	z_i = 0;
+	while (n < 100 && z_r * z_r + z_i * z_i < 4)
+	{
+		temp = z_r;
+		z_r = z_r * z_r + (-1) * z_i * z_i + c_r;
+		z_i = 2 * temp * temp + c_i;
+		n++;
+	}
+	return (n);
+}
+
+void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
+{
+	char	*dst;
+
+	dst = img->addr + (y * img->line_length + x * (img->bits_per_pixel / 8));
+	*(unsigned int*)dst = color;
+}
+
+void	draw_mandelbrot(t_mlx *mlx)
+{
+	int		n;
+	int		color;
+	double	c_r;
+	double	c_i;
+	
+	color = 0x00123456;
+	for (int y = 0; y < HEIGHT; y++)
+	{
+		for (int x = 0; x < WIDTH; x++)
+		{
+			c_r = MIN_R + x * (MAX_R - MIN_R) / WIDTH;
+			c_i = MAX_I - y * (MAX_I - MIN_I) / HEIGHT;
+			n = check_mandelbrot_set(c_r, c_i);
+			if (n == 100)
+				my_mlx_pixel_put(&mlx->img, x, y, 0x00000000);
+			else
+				my_mlx_pixel_put(&mlx->img, x, y, color / n);
+			
+		}
+	}
+}
+
+void	draw_fractal(t_mlx *mlx, t_fractal *fractal)
 {
 	if (fractal->type == 0)
-		draw_mandelbrot();
-	else if (fractal->type == 1)
-		draw_julia();
+		draw_mandelbrot(mlx);
+	// else if (fractal->type == 1)
+	// 	draw_julia();
 	// else if (fractal->type == 2)
 	// 	draw_something();
+	//여여기기서  type number가 잘못된 에러는 없을듯
 	return ;
 }
+
+void	init_fractal(t_fractal *fractal)
+{
+	fractal->min_i = MIN_I;
+	fractal->max_i = MAX_I;
+	fractal->min_r = MIN_R;
+	fractal->max_r = MAX_R;
+}
+
 
 int	init_mlx(t_mlx *mlx)
 {
