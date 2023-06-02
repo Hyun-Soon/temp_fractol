@@ -6,7 +6,7 @@
 /*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:36:46 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/02 17:37:44 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/02 22:01:38 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	check_mandelbrot_set(double c_r, double c_i)
 	{
 		temp = z_r;
 		z_r = z_r * z_r + (-1) * z_i * z_i + c_r;
-		z_i = 2 * temp * temp + c_i;
+		z_i = 2 * temp * z_i + c_i;
 		n++;
 	}
 	return (n);
@@ -77,8 +77,8 @@ void	draw_mandelbrot(t_mlx *mlx)
 	{
 		for (int x = 0; x < WIDTH; x++)
 		{
-			c_r = MIN_R + x * (MAX_R - MIN_R) / WIDTH;
-			c_i = MAX_I - y * (MAX_I - MIN_I) / HEIGHT;
+			c_r = MIN_R + (double)x * (MAX_R - MIN_R) / WIDTH;
+			c_i = MAX_I - (double)y * (MAX_I - MIN_I) / HEIGHT;
 			n = check_mandelbrot_set(c_r, c_i);
 			if (n == 100)
 				my_mlx_pixel_put(&mlx->img, x, y, 0x00000000);
