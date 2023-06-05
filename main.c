@@ -6,7 +6,7 @@
 /*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:36:46 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/05 15:19:21 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/05 16:22:25 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 int	check_mandelbrot_set(double c_r, double c_i)
 {
 	int		n;
-	int		temp;
+	double	temp;
 	double	z_r;
 	double	z_i;
 
@@ -64,14 +64,14 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 	dst = img->addr + (y * img->line_length + x * (img->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
 }
-#include <stdio.h>
+
 void	draw_mandelbrot(t_mlx *mlx, int x, int y)
 {
 	int		n;
 	int		color;
 	double	c_r;
 	double	c_i;
-	
+
 	color = 0x00123456;
 	while (y < HEIGHT)
 	{
@@ -81,12 +81,13 @@ void	draw_mandelbrot(t_mlx *mlx, int x, int y)
 			c_i = MAX_I - (double)y * (MAX_I - MIN_I) / HEIGHT;
 			//printf("c_r: %f c_i: %f\n", c_r, c_i);
 			n = check_mandelbrot_set(c_r, c_i);
+			if (n >= 10 && n != 100)
+				printf("n : %d\n", n);
 			if (n == 100)
 				my_mlx_pixel_put(&mlx->img, x, y, 0x00000000);
 			else
-				my_mlx_pixel_put(&mlx->img, x, y, color * n);
+				my_mlx_pixel_put(&mlx->img, x, y, color / n);
 			x++;
-			//c_r += (MAX_R - MIN_R) / WIDTH;
 		}
 		x = 0;
 		y++;
@@ -119,10 +120,10 @@ int	init_mlx(t_mlx *mlx)
 	mlx->mlx = mlx_init();
 	if (!mlx->mlx)
 		return (0);
-	mlx->win = mlx_new_window(mlx->mlx, 1920, 1280, "Fractal");
+	mlx->win = mlx_new_window(mlx->mlx, WIDTH, HEIGHT, "Fractal");
 	if (!mlx->win)
 		return (0);
-	mlx->img.img = mlx_new_image(mlx->mlx, 1920, 1280);
+	mlx->img.img = mlx_new_image(mlx->mlx, WIDTH, HEIGHT);
 	if (!mlx->img.img)
 		return (0);
 	mlx->img.addr = mlx_get_data_addr(mlx->img.img, &mlx->img.bits_per_pixel,
@@ -160,4 +161,3 @@ void	ft_error(const char *err_msg, int fd)
 	write(fd, "\n", 1);
 	exit(1);
 }
-
