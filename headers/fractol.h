@@ -6,7 +6,7 @@
 /*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 20:20:43 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/02 17:25:05 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/05 14:37:58 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,11 @@ typedef struct	s_mlx
 	t_img	img;
 }				t_mlx;
 
-
-
 void	ft_error(const char *err_msg, int fd);
 int		check_type(char *type, t_fractal *fractal);
 int		init_mlx(t_mlx *mlx);
 void	init_fractal(t_fractal *fractal);
 void	draw_fractal(t_mlx *mlx, t_fractal *fractal);
-void	draw_mandelbrot(t_mlx *mlx);
+void	draw_mandelbrot(t_mlx *mlx, int x, int y);
 
 #endif

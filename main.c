@@ -6,7 +6,7 @@
 /*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:36:46 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/02 22:01:38 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/05 15:19:21 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ int	check_mandelbrot_set(double c_r, double c_i)
 	while (n < 100 && z_r * z_r + z_i * z_i < 4)
 	{
 		temp = z_r;
-		z_r = z_r * z_r + (-1) * z_i * z_i + c_r;
-		z_i = 2 * temp * z_i + c_i;
+		z_r = z_r * z_r - z_i * z_i + c_r;
+		z_i = 2.0 * temp * z_i + c_i;
 		n++;
 	}
 	return (n);
@@ -64,8 +64,8 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 	dst = img->addr + (y * img->line_length + x * (img->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
 }
-
-void	draw_mandelbrot(t_mlx *mlx)
+#include <stdio.h>
+void	draw_mandelbrot(t_mlx *mlx, int x, int y)
 {
 	int		n;
 	int		color;
@@ -73,26 +73,30 @@ void	draw_mandelbrot(t_mlx *mlx)
 	double	c_i;
 	
 	color = 0x00123456;
-	for (int y = 0; y < HEIGHT; y++)
+	while (y < HEIGHT)
 	{
-		for (int x = 0; x < WIDTH; x++)
+		while (x < WIDTH)
 		{
-			c_r = MIN_R + (double)x * (MAX_R - MIN_R) / WIDTH;
+			c_r = MIN_R + (double)x * (MAX_R - MIN_R) / WIDTH; 
 			c_i = MAX_I - (double)y * (MAX_I - MIN_I) / HEIGHT;
+			//printf("c_r: %f c_i: %f\n", c_r, c_i);
 			n = check_mandelbrot_set(c_r, c_i);
 			if (n == 100)
 				my_mlx_pixel_put(&mlx->img, x, y, 0x00000000);
 			else
-				my_mlx_pixel_put(&mlx->img, x, y, color / n);
-			
+				my_mlx_pixel_put(&mlx->img, x, y, color * n);
+			x++;
+			//c_r += (MAX_R - MIN_R) / WIDTH;
 		}
+		x = 0;
+		y++;
 	}
 }
 
 void	draw_fractal(t_mlx *mlx, t_fractal *fractal)
 {
 	if (fractal->type == 0)
-		draw_mandelbrot(mlx);
+		draw_mandelbrot(mlx, 0, 0);
 	// else if (fractal->type == 1)
 	// 	draw_julia();
 	// else if (fractal->type == 2)
