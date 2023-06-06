@@ -6,7 +6,7 @@
 #    By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/05 15:14:10 by hyuim             #+#    #+#              #
-#    Updated: 2023/06/01 20:05:13 by hyuim            ###   ########.fr        #
+#    Updated: 2023/06/06 16:33:49 by hyuim            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,13 +59,15 @@ ft_printf.c \
 ft_read_format.c \
 ft_check_char.c \
 ft_print_conversions1.c \
-ft_print_conversions2.c
+ft_print_conversions2.c \
+fractol_atodb.c \
+ft_strcmp.c
 LIBFT_SRCS = ${addprefix ${LIBFT_PRE}, ${LIBFT_C}}
 LIBFT_OBJS = $(LIBFT_C:.c=.o)
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -c
+CFLAGS = -g3 -Wall -Wextra -Werror -c
 HEADER = ./headers
 NAME = a.out
 

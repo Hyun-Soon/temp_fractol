@@ -6,7 +6,7 @@
 /*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 20:20:43 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/05 14:37:58 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/06 20:45:45 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,16 @@
 # define MAX_R 3
 
 # include <unistd.h>
+# include "mlx.h"
+# include <math.h>
+# include "../libft/libft.h"
+
 
 typedef struct	s_fractal
 {
     int	type;
-	double	min_r;
-	double	max_r;
-	double	min_i;
-	double	max_i;
+	double	c_r;
+	double	c_i;
 }				t_fractal;
 
 typedef struct	s_img
@@ -48,10 +50,16 @@ typedef struct	s_mlx
 }				t_mlx;
 
 void	ft_error(const char *err_msg, int fd);
-int		check_type(char *type, t_fractal *fractal);
+int		check_input(int argc, char *argv[], t_fractal *fractal);
 int		init_mlx(t_mlx *mlx);
-void	init_fractal(t_fractal *fractal);
 void	draw_fractal(t_mlx *mlx, t_fractal *fractal);
 void	draw_mandelbrot(t_mlx *mlx, int x, int y);
+int		check_julia_set(double z_r, double z_i, t_fractal *fractal);
+void	draw_julia(t_mlx *mlx, t_fractal *fractal, int x, int y);
+void	draw_burning_ship(t_mlx *mlx, int x, int y);
+void	my_mlx_pixel_put(t_img *img, int x, int y, int color);
+int		check_mandelbrot_set(double c_r, double c_i);
+int		check_burning_ship_set(double c_r, double c_i);
+
 
 #endif

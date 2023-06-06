@@ -6,13 +6,11 @@
 /*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:36:46 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/05 16:22:25 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/06 20:51:50 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
-#include "libft/libft.h"
-#include "mlx.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[])
@@ -21,21 +19,63 @@ int main(int argc, char *argv[])
 	t_mlx		mlx;
 	t_fractal	fractal;
 
-	if (argc != 2)
-		ft_error("Wrong arguments! Plz enter only fractal type.\n", 2);
-	if (!check_type(argv[1], &fractal))
-		ft_error("Wrong fractal type.\nFractal list {mandelbrot, julia, ???}", 2);
+	if (!check_input(argc, argv, &fractal))
+		ft_error("Wrong input error.\nFractal list [mandelbrot, julia, ???]", 2);
 	if (!init_mlx(&mlx))
 		ft_error("MLX init error\n", 2);
-	init_fractal(&fractal);
 	draw_fractal(&mlx, &fractal);
-	// TODO :: draw_fractal, draw_mandelbrot, draw_julia
 	mlx_put_image_to_window(mlx.mlx, mlx.win, mlx.img.img, 0, 0);
 	mlx_loop(mlx.mlx);
-
-
 	return 0;
 }
+
+void	draw_burning_ship(t_mlx *mlx, int x, int y)
+{
+	int		n;
+	int		color;
+	double	c_r;
+	double	c_i;
+
+	color = 0x00123456;
+	while (y < HEIGHT)
+	{
+		c_i = MAX_I - (double)y * (MAX_I - MIN_I) / HEIGHT;
+		while (x < WIDTH)
+		{
+			c_r = MIN_R + (double)x * (MAX_R - MIN_R) / WIDTH; 
+			n = check_burning_ship_set(c_r, c_i);
+			if (n == 100)
+				my_mlx_pixel_put(&mlx->img, x, y, 0x00000000);
+			else
+				my_mlx_pixel_put(&mlx->img, x, y, color / n);
+			x++;
+		}
+		x = 0;
+		y++;
+	}
+	return ;
+}
+
+int	check_burning_ship_set(double c_r, double c_i)
+{
+	int		n;
+	double	z_r;
+	double	z_i;
+	double	temp;
+
+	n = 0;
+	z_r = 0;
+	z_i = 0;
+	while (n < 100 && z_r * z_r + z_i * z_i < 4)
+	{
+		temp = z_r;
+		z_r = z_r * z_r - z_i * z_i + c_r;
+		z_i = 2 * fabs(temp * z_i) + c_i;
+		n++;
+	}
+	return (n);
+}
+
 
 int	check_mandelbrot_set(double c_r, double c_i)
 {
@@ -65,6 +105,46 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
+void	draw_julia(t_mlx *mlx, t_fractal *fractal, int x, int y)
+{
+	int	n;
+	int	color;
+	double	z_r;
+	double	z_i;
+	
+	color = 0x00123456;
+	while (y < HEIGHT)
+	{
+		z_i = MAX_I - (double)y * (MAX_I - MIN_I) / HEIGHT;
+		while (x < WIDTH)
+		{
+			z_r = MIN_R + (double)x * (MAX_R - MIN_R) / WIDTH;
+			n = check_julia_set(z_r, z_i, fractal);
+			if (n < 100)
+				my_mlx_pixel_put(&mlx->img, x, y, color / (n + 1));
+			x++;
+		}
+		x = 0;
+		y++;
+	}
+}
+
+int	check_julia_set(double z_r, double z_i, t_fractal *fractal)
+{
+	int		n;
+	double	temp;
+
+	n = 0;
+	while (n < 100 && z_r * z_r + z_i * z_i < 4)
+	{
+		temp = z_r;
+		z_r = z_r * z_r - z_i * z_i + fractal->c_r;
+		z_i = 2 * temp * z_i + fractal->c_i;
+		n++;
+	}
+	return (n);
+}
+
 void	draw_mandelbrot(t_mlx *mlx, int x, int y)
 {
 	int		n;
@@ -75,14 +155,11 @@ void	draw_mandelbrot(t_mlx *mlx, int x, int y)
 	color = 0x00123456;
 	while (y < HEIGHT)
 	{
+		c_i = MAX_I - (double)y * (MAX_I - MIN_I) / HEIGHT;
 		while (x < WIDTH)
 		{
 			c_r = MIN_R + (double)x * (MAX_R - MIN_R) / WIDTH; 
-			c_i = MAX_I - (double)y * (MAX_I - MIN_I) / HEIGHT;
-			//printf("c_r: %f c_i: %f\n", c_r, c_i);
 			n = check_mandelbrot_set(c_r, c_i);
-			if (n >= 10 && n != 100)
-				printf("n : %d\n", n);
 			if (n == 100)
 				my_mlx_pixel_put(&mlx->img, x, y, 0x00000000);
 			else
@@ -98,21 +175,13 @@ void	draw_fractal(t_mlx *mlx, t_fractal *fractal)
 {
 	if (fractal->type == 0)
 		draw_mandelbrot(mlx, 0, 0);
-	// else if (fractal->type == 1)
-	// 	draw_julia();
-	// else if (fractal->type == 2)
-	// 	draw_something();
-	//여여기기서  type number가 잘못된 에러는 없을듯
+	else if (fractal->type == 1)
+		draw_julia(mlx, fractal, 0, 0);
+	else if (fractal->type == 2)
+		draw_burning_ship(mlx, 0, 0);
 	return ;
 }
 
-void	init_fractal(t_fractal *fractal)
-{
-	fractal->min_i = MIN_I;
-	fractal->max_i = MAX_I;
-	fractal->min_r = MIN_R;
-	fractal->max_r = MAX_R;
-}
 
 
 int	init_mlx(t_mlx *mlx)
@@ -131,24 +200,30 @@ int	init_mlx(t_mlx *mlx)
 	return(1);
 }
 
-int	check_type(char *type, t_fractal *fractal)
+int	check_input(int argc, char *argv[], t_fractal *fractal)
 {
 	char	*mandelbrot;
 	char	*julia;
-	int		inp_len;
+	char	*burning_ship;
 
-	inp_len = ft_strlen(type);
-	if (inp_len != 10 && inp_len != 5)
-		return (0);
 	mandelbrot = "mandelbrot";
 	julia = "julia";
-	if (!ft_strncmp(mandelbrot, type, 10) || !ft_strncmp(julia, type, 5))
+	burning_ship = "burning ship";
+	if (argc == 2 && !ft_strcmp(mandelbrot, argv[1]))
 	{
-		if (inp_len == 10)
-			fractal->type = 0;
-		else if (inp_len == 5)
-			fractal->type = 1;
-		//else for new fractal
+		fractal->type = 0;
+		return (1);
+	}
+	else if (argc == 4 && !ft_strcmp(julia, argv[1]))
+	{
+		fractal->type = 1;
+		fractal->c_r = fractol_atodb(argv[2]);
+		fractal->c_i = fractol_atodb(argv[3]);
+		return (1);
+	}
+	else if (argc == 3 && !ft_strcmp("burning", argv[1]) && !ft_strcmp("ship", argv[2]))
+	{
+		fractal->type = 2;
 		return (1);
 	}
 	return (0);

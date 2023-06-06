@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hyuim <hyuim@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 14:36:28 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/01 14:50:58 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/06 16:32:10 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,10 @@ int		print_large_x(va_list ap, size_t *bytes);
 int		print_percent(size_t *bytes);
 int		read_format(const char *format, va_list ap);
 size_t	ft_strlen(const char *s);
+
+void	ft_error(const char *err_msg, int fd);
+double	fractol_atodb(const char *str);
+int		ft_strcmp(const char *str1, const char *str2);
 
 
 
