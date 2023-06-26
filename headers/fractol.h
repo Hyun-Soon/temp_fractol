@@ -6,17 +6,17 @@
 /*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 20:20:43 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/07 17:29:08 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/26 14:24:40 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FRACTOL_H
 # define FRACTOL_H
 
-# define WIDTH 1920
-# define HEIGHT 1280
-# define ZOOMIN 0.000001
-# define ZOOMOUT 1.000001
+# define WIDTH 1000
+# define HEIGHT 1000
+# define ZOOMIN 0.9
+# define ZOOMOUT 1.01
 
 # include <unistd.h>
 # include "mlx.h"

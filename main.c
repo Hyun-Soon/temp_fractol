@@ -6,7 +6,7 @@
 /*   By: hyuim <hyuim@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 20:36:46 by hyuim             #+#    #+#             */
-/*   Updated: 2023/06/07 17:24:43 by hyuim            ###   ########.fr       */
+/*   Updated: 2023/06/26 14:31:45 by hyuim            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	zoomin(t_mlx *mlx, int x, int y)
 	r = mlx->min_r + x * mlx->r_per_WIDTH;
 	i = mlx->max_i - y * mlx->i_per_HEIGHT;
 	mlx->max_r = r + mlx->max_r * ZOOMIN;
-	mlx->min_r = r - mlx->min_r * ZOOMIN;
+	mlx->min_r = r - mlx->min_r * ZOOMIN; //-> 이걸 그냥 ZOOMIN으로 줄여버리면 안되고, ZOOMIN 계수에 맞춰서 해당 픽셀의 좌표상 위치가 유지될 수 있도록 계산해서 min_r을 계산해줘야 한다.
 	mlx->max_i = i + mlx->max_i * ZOOMIN;
 	mlx->min_i = i - mlx->min_i * ZOOMIN;
 	mlx->r_per_WIDTH = (mlx->max_r - mlx->min_r) / WIDTH;
@@ -64,12 +64,14 @@ void	zoomout(t_mlx *mlx, int x, int y)
 	double	r;
 	double	i;
 
+	//이이걸  계계속  계계i산하면서 부호가 바뀌게 되어서 줌인하다가 줌아웃처럼 보이고그런거 아닐까?
+	//ex. r = -0.1, min_r = r - (-0.2) = 0.1, max_r = r + 0.1 = 0
 	r = mlx->min_r + x * mlx->r_per_WIDTH;
 	i = mlx->max_i - y * mlx->i_per_HEIGHT;
 	mlx->max_r = r + mlx->max_r * ZOOMOUT;
-	mlx->min_r = r - mlx->min_r * ZOOMOUT;
+	mlx->min_r = r - fabs(mlx->min_r) * ZOOMOUT;
 	mlx->max_i = i + mlx->max_i * ZOOMOUT;
-	mlx->min_i = i - mlx->min_i * ZOOMOUT;
+	mlx->min_i = i - fabs(mlx->min_i) * ZOOMOUT;
 	mlx->r_per_WIDTH = (mlx->max_r - mlx->min_r) / WIDTH;
 	mlx->i_per_HEIGHT = (mlx->max_i - mlx->min_i) / HEIGHT;
 	draw_fractal(mlx);
@@ -255,8 +257,8 @@ int	init_mlx(t_mlx *mlx)
 		return (0);
 	mlx->img.addr = mlx_get_data_addr(mlx->img.img, &mlx->img.bits_per_pixel,
 		&mlx->img.line_length, &mlx->img.endian);
-	mlx->min_r = -3;
-	mlx->max_r = 3;
+	mlx->min_r = -2;
+	mlx->max_r = 2;
 	mlx->min_i = -2;
 	mlx->max_i = 2;
 	mlx->r_per_WIDTH = (mlx->max_r - mlx->min_r) / WIDTH;
